@@ -10,7 +10,7 @@ if (!defined('SECURE_ACCESS')) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Password | Digiboard</title>
+    <title>Library | Digiboard</title>
     
     <link rel="shortcut icon" href="favicon.png">
     <link rel="stylesheet" href="assets/vendor/css/all.min.css">
@@ -22,12 +22,12 @@ if (!defined('SECURE_ACCESS')) {
 </head>
 <body>
 <h1>Book</h1>
-<form method="GET" class="form-wrapper">
-    <input type="text" id="search" placeholder="Search for..." name="find" required />
-    <input type="submit" value="go" id="submit">
+<form method="GET" class="d-flex justify-content-beetween align">
+    <input type="text" class="form-control" id="search" placeholder="Search for..." name="find" required />
+    <button class="btn btn-sm btn-primary"><i class="fa-solid fa-search"></i></button>
 </form>
-<div class="table">
-    <table class="table-hover">
+<div class="table table-responsive my-4">
+    <table width="100%">
         <thead>
             <tr>
                 <th>No</th>
