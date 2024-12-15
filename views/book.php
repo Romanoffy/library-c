@@ -1,54 +1,116 @@
 <?php
-$number = 1;
-if (!defined('SECURE_ACCESS')) {
-    die('Direct access not permitterd');
+if(!isset($_SESSION['is_login'])) {
+    header("Location: /login");
+    exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library | Digiboard</title>
-    
-    <link rel="shortcut icon" href="favicon.png">
-    <link rel="stylesheet" href="assets/vendor/css/all.min.css">
-    <link rel="stylesheet" href="assets/vendor/css/OverlayScrollbars.min.css">
-    <link rel="stylesheet" href="assets/vendor/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" id="primaryColor" href="assets/css/blue-color.css">
-    <link rel="stylesheet" id="rtlStyle" href="#">
+    <title>Daftar Buku</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<h1>Book</h1>
-<form method="GET" class="d-flex justify-content-beetween align">
+    <div class="container mt-5">
+        <h2>Daftar Buku Perpustakaan</h2>
+        
+        <?php if(isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <?= $_SESSION['error']; ?>
+                <?php unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if(isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <?= $_SESSION['success']; ?>
+                <?php unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        <form method="GET" class="d-flex justify-content-beetween align">
     <input type="text" class="form-control" id="search" placeholder="Search for..." name="find" required />
     <button class="btn btn-sm btn-primary"><i class="fa-solid fa-search"></i></button>
 </form>
-<div class="table table-responsive my-4">
-    <table width="100%">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Year</th>
-            </tr>
-        </thead>
-        <tbody><?php foreach($data as $book) : ?>
-            <tr>
-                <th><?= $number++ ?></th>
-                <th><?= $book->getTitle() ?></th>
-                <th><?= $book->getAuthor() ?></th>
-                <th><?= $book->getYear() ?></th>
-                
-            </tr>     
-    </tbody>
-    <?php endforeach ?>
-    </table>
-</div>
+        <div class="table-responsive mt-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Judul</th>
+                        <th>Penulis</th>
+                        <th>Tahun Terbit</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    global $pdo;
+                    // Tangkap input pencarian
+                    $search = isset($_GET['find']) ? $_GET['find'] : '';
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+                    // Modifikasi query SQL
+                    $sql = "SELECT b.*, 
+                           br.borrow_date, 
+                           br.return_date,
+                           br.status as borrow_status,
+                           u.username as borrower
+                           FROM books b
+                           LEFT JOIN (
+                               SELECT * FROM borrowings 
+                               WHERE status = 'borrowed'
+                           ) br ON b.id = br.book_id
+                           LEFT JOIN users u ON br.user_id = u.id
+                           WHERE b.title LIKE :search
+                           ORDER BY b.title";
+                    
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute(['search' => '%' . $search . '%']);
+                    while($book = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($book['title']) . "</td>";
+                        echo "<td>" . htmlspecialchars($book['author']) . "</td>";
+                        echo "<td>" . htmlspecialchars($book['year']) . "</td>";
+                        
+                        // Status peminjaman
+                        echo "<td>";
+                        if ($book['borrow_status'] == 'borrowed') {
+                            echo "<span class='text-danger'>Dipinjam</span><br>";
+                            echo "<small>Peminjam: " . htmlspecialchars($book['borrower']) . "<br>";
+                            echo "Tanggal Pinjam: " . date('d/m/Y', strtotime($book['borrow_date'])) . "<br>";
+                            echo "Tanggal Kembali: " . date('d/m/Y', strtotime($book['return_date'])) . "</small>";
+                        } else {
+                            echo "<span class='text-success'>Tersedia</span>";
+                        }
+                        echo "</td>";
+                        
+                        // Tombol aksi
+                        echo "<td>";
+                        if ($book['borrow_status'] != 'borrowed') {
+                            echo "<a href='/borrow' class='btn btn-primary btn-sm'>Pinjam</a>";
+                        } else {
+                            if ($book['borrower'] == $_SESSION['username']) {
+                                echo "<a href='/borrow' class='btn btn-warning btn-sm'>Kembalikan</a>";
+                            } else {
+                                echo "<button class='btn btn-secondary btn-sm' disabled>Tidak Tersedia</button>";
+                            }
+                        }
+                        echo "</td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            <a href="/membership" class="btn btn-secondary">Kembali</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

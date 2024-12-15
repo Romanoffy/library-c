@@ -14,7 +14,7 @@ include('templates/header.php')?>
                 <a href="index.html"><i class="fa-duotone fa-house-chimney"></i></a>
             </div>
             <div class="bottom">
-                <h3 class="panel-title">Registration</h3>
+                <h3 class="panel-title">Login</h3>
                 <?php if (isset($_SESSION['error'])) : ?>
                             <div class="alert alert-danger text-center">
                                 <?php echo $_SESSION['error'];
@@ -22,7 +22,7 @@ include('templates/header.php')?>
                                 ?>
                             </div>
                             <?php endif ?>
-                <form method="POST" action="/register">
+                <form method="POST" action="/login">
                 <div class="input-group mb-25">
                     <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
                     <input
@@ -41,7 +41,7 @@ include('templates/header.php')?>
                         <a role="button" class="password-show"><i class="fa-duotone fa-eye"></i></a>
                     </div>
                     <button class="btn btn-primary w-100 login-btn">Sign up</button>
-                    <div class="mt-3"> Have you an account? <a href="/login">Click Here</a>
+                    <div class="mt-3"> Have you an account? <a href="/register">Click Here</a>
                     </div>
                 </form>
         </div>

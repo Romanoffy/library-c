@@ -181,3 +181,33 @@ section .main .main_img img{
     position: relative;
     top: 50px;
 }
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 4px;
+    font-weight: 600;
+    margin: 0 10px;
+    width: 70px;
+    padding: 10px 0;
+    box-shadow: 0 0 20px rgba(104, 85, 224, 0.2);
+    transition: 0.4s;
+  }
+
+  .log {
+    color: #089DA1;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid #089DA1;
+  }
+
+  button:hover {
+    color: white;
+    box-shadow: 0 0 20px #089DA1;
+    background-color: #089DA1;
+  }
+
+  button.log a {
+    text-decoration: none;
+    color: inherit;
+  }
+  

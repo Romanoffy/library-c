@@ -32,8 +32,7 @@ if (!defined('SECURE_ACCESS')) {
             </ul>
 
             <div class="social_icon">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <i class="fa-solid fa-heart"></i>
+            <button class="log"><a href="/login">Login</a></button>
             </div>
 
         </nav>
@@ -48,7 +47,7 @@ if (!defined('SECURE_ACCESS')) {
                     non fuga ex deserunt. Exercitationem velit ducimus praesentium, obcaecati hic voluptate id 
                     tenetur fuga illum quidem omnis? Rerum?
                 </p>
-                <a href="#" class="main_btn">Learn More</a>
+                <a href="/book" class="main_btn">Learn More</a>
 
             </div>
 
